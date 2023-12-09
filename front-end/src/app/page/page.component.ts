@@ -23,7 +23,7 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this.http.get<IData>('http://localhost:7071/api/users/banana')
+      this.http.get<IData>('http://localhost:7091/api/users/banana')
       .subscribe(
         (data) => {
           this.data = data
