@@ -40,6 +40,10 @@ namespace Library {
                 );
             }
             // nothing should happen if the entered old password is incorrect
+
+            // consider making a responce that will state if password change
+            // is successfull. Like if wrong old password is provided there
+            // should be an error raised
         }
 
         public User GetUSerByID(string userID) {

@@ -1,7 +1,10 @@
 using System.Net;
+using LibraryApi.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+
+using MongoDB.Driver;
 
 namespace Library.Functions
 {
@@ -27,14 +30,21 @@ namespace Library.Functions
         ) {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
+
+            MongoDBService mongoDBService = new MongoDBService("Books");
             var response = req.CreateResponse();
             await response.WriteAsJsonAsync(
-                new {
-                    Name = "User function",
-                    Content = "this is the book function that takes {userID} and gives all the books",
-                    user = $"Currently referencing {userID}"
-                }
+                mongoDBService.GetAllBooks()
             );
+
+            // var response = req.CreateResponse();
+            // await response.WriteAsJsonAsync(
+            //     new {
+            //         Name = "User function",
+            //         Content = "this is the book function that takes {userID} and gives all the books",
+            //         user = $"Currently referencing {userID}"
+            //     }
+            // );
             return response;
         }
 
