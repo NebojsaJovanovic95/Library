@@ -1,0 +1,52 @@
+[
+    {
+        "username": "alice123",
+        "hashedpassword": "hashed_password_123",
+        "userrole": "Client"
+    },
+    {
+        "username": "bob456",
+        "hashedpassword": "hashed_password_456",
+        "userrole": "Admin"
+    },
+    {
+        "username": "carol789",
+        "hashedpassword": "hashed_password_789",
+        "userrole": "Librarian"
+    },
+    {
+        "username": "dave567",
+        "hashedpassword": "hashed_password_567",
+        "userrole": "Client"
+    },
+    {
+        "username": "eve890",
+        "hashedpassword": "hashed_password_890",
+        "userrole": "Client"
+    },
+    {
+        "username": "frank234",
+        "hashedpassword": "hashed_password_234",
+        "userrole": "Client"
+    },
+    {
+        "username": "grace678",
+        "hashedpassword": "hashed_password_678",
+        "userrole": "Client"
+    },
+    {
+        "username": "henry345",
+        "hashedpassword": "hashed_password_345",
+        "userrole": "Client"
+    },
+    {
+        "username": "irene012",
+        "hashedpassword": "hashed_password_012",
+        "userrole": "Client"
+    },
+    {
+        "username": "jack567",
+        "hashedpassword": "hashed_password_567",
+        "userrole": "Client"
+    }
+]

@@ -3,7 +3,7 @@ using LibraryApi.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Library.Functions
@@ -17,6 +17,13 @@ namespace Library.Functions
             _logger = loggerFactory.CreateLogger<BookFunction>();
         }
 
+        public static Lazy<MongoClient> lazyClient = new Lazy<MongoClient>();
+        public static MongoClient client = new MongoClient(
+            Environment.GetEnvironmentVariable(
+                "MongoDBConnectionString"
+            )
+        );        
+
         [Function("BookFunction")]
         public async Task<HttpResponseData> Run(
             [
@@ -28,23 +35,26 @@ namespace Library.Functions
             ] HttpRequestData req,
             string userID
         ) {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-
-
-            MongoDBService mongoDBService = new MongoDBService("Books");
-            var response = req.CreateResponse();
-            await response.WriteAsJsonAsync(
-                mongoDBService.GetAllBooks()
+            _logger.LogInformation(
+                $"Databases: {string.Join(", ", client.ListDatabaseNames().ToList())}"
             );
 
-            // var response = req.CreateResponse();
-            // await response.WriteAsJsonAsync(
-            //     new {
-            //         Name = "User function",
-            //         Content = "this is the book function that takes {userID} and gives all the books",
-            //         user = $"Currently referencing {userID}"
-            //     }
-            // );
+            IMongoCollection<Book> bookCollection = client
+            .GetDatabase("library")
+            .GetCollection<Book>("books");
+
+            BsonDocument filter = new BsonDocument(
+                
+            );
+            var booksToFind = bookCollection.Find(filter);
+            
+            _logger.LogInformation($"got to here {booksToFind}");
+            List<Book> books = booksToFind.ToList();
+            
+            var response = req.CreateResponse();
+            await response.WriteAsJsonAsync(
+                books
+            );
             return response;
         }
 

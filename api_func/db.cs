@@ -1,24 +1,68 @@
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library {
     public class Book {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+
+        [BsonElement("title")]
+        [JsonPropertyName("title")]
         public string Title { get; set; }
+
+        [BsonElement("author")]
+        [JsonPropertyName("author")]
         public string Author { get; set; }
+
+        [BsonElement("description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
-        public bool CheckedOut { get; set; }
+
+        [BsonElement("checkedout")]
+        [JsonPropertyName("checkedout")]
+        public string CheckedOut { get; set; }
     }
 
+    public enum Role {
+        Client,
+        Librarian,
+        Admin
+    }
     public class User {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string UserID { get; set; }
+
+        [BsonElement("username")]
+        [JsonPropertyName("username")]
         public string UserName { get; set; }
         
         // Hashed password field
+        [BsonElement("hashedpassword")]
+        [JsonPropertyName("hashedpassword")]
         private string _hashedPassword;
 
+        [BsonElement("userrole")]
+        [JsonPropertyName("userrole")]
+        public Role UserRole { get; set; }
         public User(string userName, string plainTextPassword) {
             UserID = GenerateUserID();
             UserName = userName;
             _hashedPassword = PasswordHasher.HashPassword(plainTextPassword);
+            UserRole = Role.Client;
+        }
+
+        private User(string userName, string plainTextPassword, Role userRole) {
+            // I am not sure if I need this constructor
+            // maybe just having the incommign librarian or admin start as
+            // client then get promoted by admin. Maybe use "Unassigned" role
+            UserID = GenerateUserID();
+            UserName = userName;
+            _hashedPassword = PasswordHasher.HashPassword(plainTextPassword);
+            UserRole = userRole;
         }
 
         public bool VerifyPassword(string plainTextPassword) {
@@ -27,6 +71,26 @@ namespace Library {
                 plainTextPassword,
                 _hashedPassword
             );
+        }
+        
+        private bool VerifyAdmin(string plainTextPassword) {
+            if (this.UserRole != Role.Admin) {
+                return false;
+            }
+            return this.VerifyPassword(plainTextPassword);
+        }
+
+        public void SetUserRole(
+            User candidateUser,
+            Role assigningRole,
+            string plainTextPassword
+        ) {
+            if (this.VerifyAdmin(plainTextPassword)) {
+                candidateUser.UserRole = assigningRole;
+            } else {
+                // should throw an exception for wrong role
+                return;
+            }
         }
 
         public void ChangePassword(
@@ -46,7 +110,7 @@ namespace Library {
             // should be an error raised
         }
 
-        public User GetUSerByID(string userID) {
+        public User GetUserByID(string userID) {
             // Implement the logic to retrieve user form MongoDB by UserID
             // return the user object
             return null;
