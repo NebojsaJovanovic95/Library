@@ -15,14 +15,7 @@ namespace Library.Functions
         public BookFunction(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<BookFunction>();
-        }
-
-        public static Lazy<MongoClient> lazyClient = new Lazy<MongoClient>();
-        public static MongoClient client = new MongoClient(
-            Environment.GetEnvironmentVariable(
-                "MongoDBConnectionString"
-            )
-        );        
+        }      
 
         [Function("BookFunction")]
         public async Task<HttpResponseData> Run(
@@ -35,21 +28,9 @@ namespace Library.Functions
             ] HttpRequestData req,
             string userID
         ) {
-            _logger.LogInformation(
-                $"Databases: {string.Join(", ", client.ListDatabaseNames().ToList())}"
-            );
+            _logger.LogInformation($"users/{userID}/books called");
 
-            IMongoCollection<Book> bookCollection = client
-            .GetDatabase("library")
-            .GetCollection<Book>("books");
-
-            BsonDocument filter = new BsonDocument(
-                
-            );
-            var booksToFind = bookCollection.Find(filter);
-            
-            _logger.LogInformation($"got to here {booksToFind}");
-            List<Book> books = booksToFind.ToList();
+            var books = MongoDBService.Instance.GetAllBooks();
             
             var response = req.CreateResponse();
             await response.WriteAsJsonAsync(
@@ -115,18 +96,16 @@ namespace Library.Functions
                 )
             ] HttpRequestData req,
             string userID,
-            int bookID
+            string bookID
         ) {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            _logger.LogInformation($"users/{userID}/books/{bookID} called");
 
+            // string testing_id = "6595d6e69c3bc67ccd6f1528";
+
+            var book = MongoDBService.Instance.GetBook(bookID);
             var response = req.CreateResponse();
             await response.WriteAsJsonAsync(
-                new {
-                    name = "User function",
-                    content = "this is the book function that takes {userID} and gives status of {bookID}",
-                    user = $"Currently referencing {userID}",
-                    book = $"Currently referencing book {bookID}"
-                }
+                book
             );
             return response;
         }

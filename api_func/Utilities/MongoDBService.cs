@@ -4,19 +4,25 @@ using MongoDB.Driver;
 using Library;
 using Amazon.SecurityToken.Model;
 using MongoDB.Bson;
-public class MongoDBService
+public sealed class MongoDBService
 {
-    private static MongoClient _client;
+    private static readonly MongoClient _client = new MongoClient(
+        Environment.GetEnvironmentVariable(
+            "MongoDBConnectionString"
+        )
+    );
+    private static readonly MongoDBService _instance = new MongoDBService();
 
-    public MongoDBService() {
-        _client = new MongoClient(
-            Environment.GetEnvironmentVariable(
-                "MongoDBConnectionString"
-            )
-        );  
+    private MongoDBService() { }
+
+
+    public static MongoDBService Instance {
+        get {
+            return _instance;
+        }
     }
 
-    public List<Book> getAllBooks(
+    public List<Book> GetAllBooks(
 
     ) {
         return _client
@@ -27,7 +33,7 @@ public class MongoDBService
         ).ToList();
     }
 
-    public List<User> getAllUsers(
+    public List<User> GetAllUsers(
 
     ) {
         return _client
@@ -37,58 +43,37 @@ public class MongoDBService
             new BsonDocument()
         ).ToList();
     }
+
+    public Book GetBook(
+        string bookId
+    ) {
+        return _client
+        .GetDatabase("library")
+        .GetCollection<Book>("books")
+        .Find(
+            Builders<Book>
+            .Filter
+            .Eq(
+                "_id",
+                ObjectId.Parse(bookId)
+            )
+        ).FirstOrDefault<Book>();
+    }
     
-    public User getUserById(
+    public User getUser(
         string userID
     ) {
         return _client
         .GetDatabase("library")
         .GetCollection<User>("users")
         .Find(
-            new BsonDocument(
-                // write filter string for userID
+            Builders<User>
+            .Filter
+            .Eq(
+                "_id",
+                ObjectId.Parse(userID)
             )
-        ).First<User>();
+        ).FirstOrDefault<User>();
     }
-
-    private string collectionFromType(Object object) {
-        // figure out collection by type
-        return "users";
-    }
-
-    public List<T> getAll(string filter) {
-        return _client
-        .GetDatabase("library")
-        .GetCollection<T>(collectionFromType(new T()))
-        .Find(
-            new BsonDocument()
-        ).ToList();
-    }
-    // private readonly IMongoCollection<Book> _booksCollection;
-    // private readonly IMongoCollection<User> _usersCollection;
-
-    // public MongoDBService(string databaseName) {
-    //     var mongoDBConnetionString = Environment
-    //     .GetEnvironmentVariable(
-    //         "MongoDBConnectionString"
-    //     );
-    //     var mongoClient = new MongoClient(
-    //         mongoDBConnetionString
-    //     );
-    //     var database = mongoClient.GetDatabase(databaseName);
-    //     _booksCollection = database.GetCollection<Book>("Books");
-    //     _usersCollection = database.GetCollection<User>("Users");
-    // }
-
-    public List<Book> GetAllBooks()
-    {
-        return _booksCollection.Find(book => true).ToList();
-    }
-
-    public List<User> GetAllUsers()
-    {
-        return _usersCollection.Find(user => true).ToList();
-    }
-
     // Add other MongoDB-related methods here as needed
 }

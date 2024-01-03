@@ -54,20 +54,46 @@ namespace Library.Functions
                     AuthorizationLevel.Anonymous,
                     "get",
                     "post",
+                    Route = "users"
+                )
+            ] HttpRequestData req
+        ) {
+            _logger.LogInformation("getting all users data");
+            var users = MongoDBService.Instance.GetAllUsers();
+            var response = req.CreateResponse();
+            await response.WriteAsJsonAsync(
+                users
+            );
+            return response;
+        }
+
+        
+    }
+
+    public class UserByIDFunction {
+        private readonly ILogger _logger;
+
+        public UserByIDFunction(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<UserByIDFunction>();
+        }
+        [Function("UserByIDFunction")]
+        public async Task<HttpResponseData> Run(
+            [
+                HttpTrigger(
+                    AuthorizationLevel.Anonymous,
+                    "get",
+                    "post",
                     Route = "users/{userID}"
                 )
             ] HttpRequestData req,
             string userID
         ) {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-
+            _logger.LogInformation("getting all users");
+            var user = MongoDBService.Instance.getUser(userID);
             var response = req.CreateResponse();
             await response.WriteAsJsonAsync(
-                new {
-                    name = "User function",
-                    content = "this is the user function that takes {userID}",
-                    user = $"Currently referencing {userID}"
-                }
+                user
             );
             return response;
         }

@@ -1,0 +1,90 @@
+[{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f1528"
+  },
+  "title": "The Great Gatsby",
+  "author": "F. Scott Fitzgerald",
+  "description": "A story of love and ambition in the roaring twenties.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f1529"
+  },
+  "title": "To Kill a Mockingbird",
+  "author": "Harper Lee",
+  "description": "A story of racial injustice and the loss of innocence in the American South.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152a"
+  },
+  "title": "1984",
+  "author": "George Orwell",
+  "description": "A dystopian novel set in a totalitarian society.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152b"
+  },
+  "title": "Animal Farm",
+  "author": "George Orwell",
+  "description": "A political allegory about the Russian Revolution and the rise of Stalinism.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152c"
+  },
+  "title": "Brave New World",
+  "author": "Aldous Huxley",
+  "description": "A dystopian novel set in a future world where people are genetically engineered and conditioned to be happy.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152d"
+  },
+  "title": "The Catcher in the Rye",
+  "author": "J.D. Salinger",
+  "description": "A story of teenage angst and alienation in post-World War II America.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152e"
+  },
+  "title": "The Color Purple",
+  "author": "Alice Walker",
+  "description": "A story of a young African American girl who faces racism and abuse in the American South.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f152f"
+  },
+  "title": "The Diary of a Young Girl",
+  "author": "Anne Frank",
+  "description": "A diary of a young Jewish girl who hid from the Nazis during World War II.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f1530"
+  },
+  "title": "The Grapes of Wrath",
+  "author": "John Steinbeck",
+  "description": "A story of the Joad family's migration from the Dust Bowl to California during the Great Depression.",
+  "checkedout": "no"
+},
+{
+  "_id": {
+    "$oid": "6595d6e69c3bc67ccd6f1531"
+  },
+  "title": "The Great Expectations",
+  "author": "Charles Dickens",
+  "description": "A coming-of-age story of a young orphan named Pip.",
+  "checkedout": "no"
+}]
