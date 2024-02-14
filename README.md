@@ -10,7 +10,12 @@ Just realised that referencing users/userID/books/checkedOut and users/userID/bo
 The Fix is to make the uri for checked out books
 users/userID/CheckedOutBooks
 
-## 
+## MongoDBService made
+So I ahve a singleton class MongoDBService which I use to query the database.
+
+I got the Users and the Books to read appropriatelly
+
+I am going to test if the users profiles can be used properly and then implement access control for api routes based on log in status
 # Step 3
 
 # what do the API endpoints look like
