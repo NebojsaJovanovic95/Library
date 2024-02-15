@@ -64,13 +64,14 @@ namespace Library.Functions
         ) {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
+            // this route should get the user and then find all books that are
+            // checked out by the user
             var response = req.CreateResponse();
+            var user = MongoDBService.Instance.GetUser(userID);
+            // var books = MongoDBService.Instance.GetAllBooks();
+            var loans = MongoDBService.Instance.GetLoansForUser(user);
             await response.WriteAsJsonAsync(
-                new {
-                    name = "User function",
-                    content = "this is the book function that takes {userID} and gives all the books user checked out",
-                    user = $"Currently referencing {userID}"
-                }
+                loans
             );
             return response;
         }
@@ -107,6 +108,44 @@ namespace Library.Functions
             await response.WriteAsJsonAsync(
                 book
             );
+            return response;
+        }
+    }
+
+    public class CheckOutBook {
+        private readonly ILogger _logger;
+
+        public CheckOutBook(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<CheckOutBook>();
+        }
+
+        [Function("CheckOutBook")]
+        public async Task<HttpResponseData> Run(
+            [
+                HttpTrigger(
+                    AuthorizationLevel.Anonymous,
+                    "get",
+                    "put",
+                    Route = "checkout/{userID}/{bookID}"
+                )
+            ] HttpRequestData req,
+            string userID,
+            string bookID
+        ) {
+            _logger.LogInformation($"checkout/{userID}/{bookID} called");
+
+            // string testing_id = "6595d6e69c3bc67ccd6f1528";
+            // 65cd18f58ba0b164d7790036
+            // 6595d6e69c3bc67ccd6f1528
+
+            var book = MongoDBService.Instance.GetBook(bookID);
+            var user = MongoDBService.Instance.GetUser(userID);
+            MongoDBService.Instance.MeTakeBook(
+                bookID,
+                userID
+            );
+            var response = req.CreateResponse();
             return response;
         }
     }

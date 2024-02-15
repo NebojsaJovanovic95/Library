@@ -7,7 +7,7 @@ namespace Library {
     public class Book {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string BookID { get; set; }
 
         [BsonElement("title")]
         [JsonPropertyName("title")]
@@ -24,6 +24,10 @@ namespace Library {
         [BsonElement("checkedout")]
         [JsonPropertyName("checkedout")]
         public string CheckedOut { get; set; }
+    }
+
+    public class BookInstance : Book {
+        // actual book instance that will be available or not
     }
 
     public enum Role {
@@ -48,14 +52,21 @@ namespace Library {
         [BsonElement("userrole")]
         [JsonPropertyName("userrole")]
         public Role UserRole { get; set; }
-        public User(string userName, string plainTextPassword) {
+        public User(
+            string userName,
+            string plainTextPassword
+        ) {
             UserID = GenerateUserID();
             UserName = userName;
             _hashedPassword = PasswordHasher.HashPassword(plainTextPassword);
             UserRole = Role.Client;
         }
 
-        private User(string userName, string plainTextPassword, Role userRole) {
+        private User(
+            string userName,
+            string plainTextPassword,
+            Role userRole
+        ) {
             // I am not sure if I need this constructor
             // maybe just having the incommign librarian or admin start as
             // client then get promoted by admin. Maybe use "Unassigned" role
@@ -111,9 +122,7 @@ namespace Library {
         }
 
         public User GetUserByID(string userID) {
-            // Implement the logic to retrieve user form MongoDB by UserID
-            // return the user object
-            return null;
+            return MongoDBService.Instance.GetUser(userID);
         }
 
         private string GenerateUserID() {
@@ -121,6 +130,116 @@ namespace Library {
             return Guid.NewGuid().ToString();
         }
         
+    }
+
+    public class LoanPrimitive {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string LoanID { get; set; }
+
+        [BsonElement("book_id")]
+        [JsonPropertyName("book_id")]
+        public string BookID { get; set; }
+
+        [BsonElement("user_id")]
+        [JsonPropertyName("user_id")]
+        public string UserID { get; set; }
+
+        [BsonElement("loan_date")]
+        [JsonPropertyName("loan_date")]
+        public DateTime LoanDate { get; set; }
+
+        [BsonElement("return_date")]
+        [JsonPropertyName("return_date")]
+        public DateTime ReturnDate { get; set; }
+
+        public LoanPrimitive(
+            string loan_id,
+            string book_id,
+            string user_id,
+            DateTime loanDate,
+            DateTime returnDate
+        ) {
+            LoanID = loan_id;
+            BookID = book_id;
+            UserID = user_id;
+            LoanDate = loanDate;
+            ReturnDate = returnDate;
+        }
+
+        // public LoanPrimitive(
+        //     string book_id,
+        //     string user_id
+        // ) {
+        //     BookID = book_id;
+        //     UserID = user_id;
+        // }
+    }
+
+    public class Loan {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string LoanID { get; set; }
+        public Book BorrowedBook { get; set; }
+        public User Borrower { get; set; }
+        public DateTime LoanDate { get; set; }
+        public DateTime ReturnDate { get; set; }
+
+        public Loan(
+            LoanPrimitive loan
+        ) {
+            
+            LoanID = loan.LoanID;
+            BorrowedBook = MongoDBService.Instance
+            .GetBook(
+                loan.BookID
+            );
+            Borrower = MongoDBService.Instance
+            .GetUser(
+                loan.UserID
+            );
+            LoanDate = loan.LoanDate;
+            ReturnDate = loan.ReturnDate;
+            
+        }
+
+        public Loan(
+            string loan_id,
+            Book book,
+            User user,
+            DateTime loanDate,
+            DateTime returnDate
+        ) {
+            LoanID = loan_id;
+            BorrowedBook = book;
+            Borrower = user;
+            LoanDate = loanDate;
+            ReturnDate = returnDate;
+        }
+
+        // public Loan From_Primitive(
+        //     LoanPrimitive loan
+        // ) {
+        //     return new Loan(
+
+        //     )
+        // }
+
+        public LoanPrimitive To_Primitive(
+
+        ) {
+            return new LoanPrimitive(
+                this.LoanID,
+                this.BorrowedBook.BookID,
+                this.Borrower.UserID,
+                this.LoanDate,
+                this.ReturnDate
+            );
+        }
+
+        public bool IsOverdue() {
+            return DateTime.Now > ReturnDate;
+        }
     }
 
     public class Library {
@@ -185,7 +304,9 @@ namespace Library {
             // Implement logic to retrieve books from mongoDB by author name
             // Return a list of book objects or an empty list if none are found
 
-            return new List<Book>();
+            return MongoDBService.Instance.GetAllBooks()
+                .Where(book => book.Author == authorName)
+                .ToList();
         }
     }
 }

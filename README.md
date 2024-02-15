@@ -2,6 +2,13 @@
 
 # Step 4 building
 
+make sql database to store details for a book
+you can also make a .json file to save this data
+
+make functionality that user_id has taken the book and made a loan
+makethe funnc that he can end the loan
+
+
 Making Azure Functions with .net 7
 implementing basic endpoints as discussed in step 3
 

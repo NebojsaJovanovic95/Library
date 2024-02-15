@@ -154,7 +154,7 @@ namespace Library.Functions
             string userID
         ) {
             _logger.LogInformation("getting all users");
-            var user = MongoDBService.Instance.getUser(userID);
+            var user = MongoDBService.Instance.GetUser(userID);
             var response = req.CreateResponse();
             await response.WriteAsJsonAsync(
                 user
