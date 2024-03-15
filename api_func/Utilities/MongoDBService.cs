@@ -139,14 +139,12 @@ public sealed class MongoDBService
     ) {
         _client
         .GetDatabase("library")
-        .GetCollection<BsonDocument>("loans")
+        .GetCollection<LoanPrimitive>("loans")
         .InsertOne(
-            new BsonDocument {
-                { "book_id", bookID },
-                { "user_id", userID },
-                { "loan_date", DateTime.UtcNow },
-                { "return_day", DateTime.UtcNow.AddDays(7) }
-            }
+            new LoanPrimitive(
+                bookID,
+                userID
+            )
         );
     }
 

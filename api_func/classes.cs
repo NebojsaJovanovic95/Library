@@ -135,7 +135,7 @@ namespace Library {
     public class LoanPrimitive {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string LoanID { get; set; }
+        public string? LoanID { get; set; }
 
         [BsonElement("book_id")]
         [JsonPropertyName("book_id")]
@@ -167,13 +167,15 @@ namespace Library {
             ReturnDate = returnDate;
         }
 
-        // public LoanPrimitive(
-        //     string book_id,
-        //     string user_id
-        // ) {
-        //     BookID = book_id;
-        //     UserID = user_id;
-        // }
+        public LoanPrimitive(
+            string book_id,
+            string user_id
+        ) {
+            BookID = book_id;
+            UserID = user_id;
+            LoanDate = DateTime.UtcNow;
+            ReturnDate = DateTime.UtcNow.AddDays(7);
+        }
     }
 
     public class Loan {
